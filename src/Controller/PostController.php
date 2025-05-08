@@ -18,10 +18,24 @@ use Symfony\Component\Routing\Attribute\Route;
 final class PostController extends AbstractController
 {
     #[Route('/', name: 'app_post')]
-    public function index(PostRepository $postRepository): Response
+    public function index(PostRepository $postRepository, Request $request): Response
     {
+        $posts = $postRepository->findAll();
+        $commentForms = [];
+
+        foreach ($posts as $post) {
+            $comment = new Comment();
+            $form = $this->createForm(CommentForm::class, $comment,[
+                'action' => $this->generateUrl('app_post',
+                ['id' => $post->getId()
+                ])
+            ]);
+            $commentForms[$post->getId()] = $form->createView();
+
+        }
         return $this->render('post/index.html.twig', [
            'posts' => $postRepository->findAll(),
+            'commentForms' => $commentForms,
         ]);
     }
 
