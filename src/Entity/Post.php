@@ -17,7 +17,7 @@ class Post
     private ?int $id = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    private ?string $tititle = null;
+    private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT)]
     private ?string $content = null;
@@ -58,14 +58,14 @@ class Post
         return $this->id;
     }
 
-    public function getTititle(): ?string
+    public function getTitle(): ?string
     {
-        return $this->tititle;
+        return $this->title;
     }
 
-    public function setTititle(string $tititle): static
+    public function setTitle(string $title): static
     {
-        $this->tititle = $tititle;
+        $this->title = $title;
 
         return $this;
     }
@@ -194,5 +194,16 @@ class Post
         }
 
         return $this;
+    }
+
+
+    public function isLikedBy(User $user): bool
+    {
+        foreach ($this->likes as $like) {
+            if($like->getAuthor() === $user){
+                return true;
+            }
+        }
+        return false;
     }
 }
