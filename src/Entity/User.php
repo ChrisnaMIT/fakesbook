@@ -57,6 +57,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToOne(mappedBy: 'ofUser', cascade: ['persist', 'remove'])]
     private ?Profile $profile = null;
 
+
+
     public function __construct()
     {
         $this->posts = new ArrayCollection();

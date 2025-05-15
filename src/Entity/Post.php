@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\Image;
 use App\Repository\PostRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -45,6 +46,9 @@ class Post
      */
     #[ORM\OneToMany(targetEntity: Image::class, mappedBy: 'post')]
     private Collection $images;
+
+    #[ORM\ManyToOne(inversedBy: 'posts')]
+    private ?Profile $profile = null;
 
     public function __construct()
     {
@@ -200,10 +204,22 @@ class Post
     public function isLikedBy(User $user): bool
     {
         foreach ($this->likes as $like) {
-            if($like->getAuthor() === $user){
+            if($like->getAuthor() === $user) {
                 return true;
             }
         }
         return false;
+    }
+
+    public function getProfile(): ?Profile
+    {
+        return $this->profile;
+    }
+
+    public function setProfile(?Profile $profile): static
+    {
+        $this->profile = $profile;
+
+        return $this;
     }
 }

@@ -27,26 +27,49 @@
             </div>
 
 
-           {# {% include 'like/like.html.twig' %}  Ajouter ici les boutons pour les emojis  #}
-            <div class="flex gap-4 text-3xl mb-4">
-                <span>❤️</span><span>😍</span><span>😄</span>
-            </div>
+           {% include 'like/like.html.twig' %}
+
 
 
             {# Changer l'emplacement des ces boutons  #}
             <div class="flex gap-3 mb-4">
-                <a href="{{ path('app_post_delete', {id: post.id}) }}" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Supprimer</a>
+                {# Bouton supprimer #}
+                {% if app.user and app.user == post.author %}
+                    <form method="post" action="{{ path('app_post_delete', {id: post.id}) }}" onsubmit="return confirm('Voulez-vous vraiment supprimer ce post ?');">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ post.id) }}">
+                        <button class="bg-red-500 text-white px-4 py-2 rounded">Supprimer</button>
+                    </form>
+                {% endif %}
+
                 <a href="{{ path('app_post') }}" class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">Retour</a>
-                <a href="{{ path('app_post_images', {id: post.id}) }}" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Images</a>
+
+                {# Bouton changer image #}
+                {% if app.user and app.user == post.author %}
+                    <form method="post" action="{{ path('app_post_images', {id: post.id}) }}">
+                        <input type="hidden">
+                        <button class="bg-green-500 text-white px-4 py-2 rounded">Changer l'image</button>
+                    </form>
+                {% endif %}
+
+
             </div>
         </div>
 
 
-        <div class="bg-yellow-100 rounded-2xl p-6 shadow-inner">
+
             {% for comment in post.comments %}
                 <div class="mb-6 border-b pb-4">
                     <div class="flex items-start mb-2">
-                        <div class="w-10 h-10 rounded-full bg-gray-300 mr-3"></div>
+                        {% if post.author.profile and post.author.profile.image and post.author.profile.image.imageName %}
+
+                            <img
+                                    src="{{ vich_uploader_asset(post.author.profile.image, 'imageFile') | imagine_filter('imageProfile') }}"
+                                    alt="Photo de profil"
+                                    class="w-10 h-10 rounded-full object-cover border border-gray-400"
+                            >
+                        {% else %}
+                            <div class="w-10 h-10 rounded-full bg-gray-300"></div>
+                        {% endif %}
                         <div>
                             <p class="font-semibold">{{ comment.author.email }}</p>
                             <p class="text-sm text-gray-500">{{ comment.createdAt|date('d M Y') }}</p>
@@ -56,10 +79,7 @@
                         <p class="text-gray-800">{{ comment.content }}</p>
                     </div>
 
-                    {# {% include 'like/like.html.twig' %}  Ajouter ici les boutons pour les emojis  #}
-                    <div class="flex gap-3 text-2xl mt-2">
-                        <span>❤️</span><span>😍</span><span>😄</span>
-                    </div>
+
                 </div>
             {% else %}
                 <p class="text-center text-gray-400">Aucun commentaire pour l’instant.</p>

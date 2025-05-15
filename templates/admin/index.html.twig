@@ -1,58 +1,59 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello AdminController!{% endblock %}
+
 
 {% block body %}
-    <link rel="stylesheet" href="{{ asset('styles/app.css') }}">
-    <table class="table table-striped">
-        <thead>
-        <tr>
-            <th>id</th>
-            <th>email</th>
-            <th>role</th>
-            <th>action</th>
-        </tr>
-        </thead>
+    <div class="min-h-screen bg-yellow-100 p-4">
+        <h1 class="text-2xl font-bold mb-6 text-center">Tous les utilisateurs</h1>
+        <div class="space-y-6 max-w-md mx-auto">
 
-        <tbody>
-        {% for user in users %}
-            <tr>
-                <td>{{ user.id }}</td>
-                <td>{{ user.email }}</td>
-                <td>
-                    {% for role in user.roles %}
-                        {% if role == 'ROLE_USER' %}
-                            <span class="badge rounded-pill text-bg-info">User</span>
+            <hr class="w-48 h-1 mx-auto my-4 bg-gray-100 border-0 rounded-sm md:my-10 dark:bg-gray-700">
+            {% for user in users %}
 
-                        {% elseif role == 'ROLE_ADMIN' %}
-                            <span class="badge rounded-pill text-bg-success">Admin</span>
 
-                        {% endif %}
-                    {% endfor %}
+                {% for role in user.roles %}
 
+                    {% if role == 'ROLE_USER' %}
+                        <span class="inline-block px-3 py-1 text-sm font-semibold text-white bg-red-600 rounded-full">User</span>
+                    {% elseif role == 'ROLE_ADMIN' %}
+                        <span class="inline-block px-3 py-1 text-sm font-semibold text-white bg-green-600 rounded-full">Admin</span>
+                    {% endif %}
+
+                {% endfor %}
+
+                <div class="flex items-center justify-between bg-white p-4 rounded-xl shadow">
                     {% if user == app.user %}
-                        <span class="badge rounded-pill text-bg-warning">c'est toi </span>
+                        <span>C'est toi </span>
                     {% endif %}
-                </td>
-
-                <td>
-                    {% if 'ROLE_ADMIN' not in user.roles %}
-                        <a href="{{ path('app_promote_admin', {id:user.id })}}" class="btn btn-success">Promote</a>
-
-                    {% else %}
-                        <a href="{{ path('app_demote_admin', {id:user.id })}}" class="btn btn-warning">Demote</a>
-
-                    {% endif %}
-                </td>
 
 
-            </tr>
+                    <div class="flex items-center space-x-4">
 
-        {% endfor %}
-        </tbody>
+                        <span class="font-semibold text-lg">{{ user.email }}</span>
+                    </div>
 
 
-    </table>
 
-    <a href="{{ path('app_post') }}" class="btn btn-primary">Retour</a>
+                    <div class="space-x-2">
+                        <form method="post" action="{{ path('app_promote_admin', {id: user.id}) }}" class="inline">
+                            <button class="bg-blue-500 hover:bg-blue-600 text-white text-sm px-3 py-1 rounded-full" type="submit">Promote</button>
+                        </form>
+                        <form method="post" action="{{ path('app_demote_admin', {id: user.id}) }}" class="inline">
+                            <button class="bg-blue-100 hover:bg-blue-200 text-blue-600 text-sm px-3 py-1 rounded-full border border-blue-300" type="submit">Demote</button>
+                        </form>
+                    </div>
+                </div>
+
+                <hr class="w-48 h-1 mx-auto my-4 bg-gray-100 border-0 rounded-sm md:my-10 dark:bg-gray-700">
+            {% else %}
+                <p class="text-center text-gray-600">Aucun utilisateur trouvé.</p>
+            {% endfor %}
+            <br>
+            <a href="{{ path('app_post') }}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-yellow-600">Retour</a>
+        </div>
+
+    </div>
+
+
+
 {% endblock %}

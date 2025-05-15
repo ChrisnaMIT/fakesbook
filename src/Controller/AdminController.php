@@ -39,7 +39,7 @@ final class AdminController extends AbstractController
             $manager->persist($user);
             $manager->flush();
         }
-        return $this->redirectToRoute('app_profile_admin');
+        return $this->redirectToRoute('app_admin');
     }
 
     //------------------------------------------------------------
@@ -48,7 +48,7 @@ final class AdminController extends AbstractController
     #[Route('demote/{id}', name:'app_demote_admin')]
     public function demoteAdmin(User $user, EntityManagerInterface $manager): Response
     {
-        if(!in_array('ROLE_ADMIN', $user->getRoles())){
+        if(in_array('ROLE_ADMIN', $user->getRoles())){
             $user->setRoles([]);
             $manager->persist($user);
             $manager->flush();

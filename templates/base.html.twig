@@ -7,11 +7,13 @@
 
         {% block stylesheets %}
             <link rel="stylesheet" href="{{ asset('styles/app.css') }}">
-
         {% endblock %}
 
-        {{ encore_entry_link_tags('app') }}
-        {{ encore_entry_script_tags('app') }}
+        {% block javascript %}
+        {% block importmap %}{{ importmap('map') }}{% endblock %}
+        {% endblock %}
+
+
 
     </head>
 

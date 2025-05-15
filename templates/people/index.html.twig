@@ -17,6 +17,12 @@
                             Demander en ami
                         </a>
                     {% endif %}
+
+                    <a href="{{ path('app_chat_initiate', { id: profile.id }) }}"
+                       class="bg-blue-500 hover:bg-blue-700 text-white font-semibold py-1 px-3 rounded ml-2">
+                        Envoyer un message
+                    </a>
+
                 </div>
             {% endif %}
         {% endfor %}

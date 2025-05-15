@@ -10,6 +10,7 @@ use App\Form\ImageForm;
 use App\Form\PostForm;
 use App\Repository\PostRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,10 +19,18 @@ use Symfony\Component\Routing\Attribute\Route;
 final class PostController extends AbstractController
 {
     #[Route('/', name: 'app_post')]
-    public function index(PostRepository $postRepository, Request $request): Response
+    public function index(PostRepository $postRepository, Request $request, PaginatorInterface $paginator): Response
     {
         $posts = $postRepository->findAll();
         $commentForms = [];
+
+
+        $pagination = $paginator->paginate(
+        $postRepository->findAll(),
+            $request->query->getInt('page', 1),
+            2
+        );
+
 
         foreach ($posts as $post) {
             $comment = new Comment();
@@ -36,6 +45,7 @@ final class PostController extends AbstractController
         return $this->render('post/index.html.twig', [
            'posts' => $postRepository->findAll(),
             'commentForms' => $commentForms,
+            'pagination' => $pagination,
         ]);
     }
 
@@ -63,7 +73,7 @@ final class PostController extends AbstractController
 
 
     #[Route('/post/create', name: 'app_post_create')]
-    public function create(Request $request, EntityManagerInterface $manager ): Response
+    public function create(Request $request, EntityManagerInterface $manager, PostRepository $postRepository ): Response
     {
         if(!$this->getUser()){
             return $this->redirectToRoute('app_login');
@@ -77,7 +87,7 @@ final class PostController extends AbstractController
             $post->setCreatedAt(new \DateTime());
             $manager->persist($post);
             $manager->flush();
-             return $this->redirectToRoute('app_post_images', ['id' => $post->getId()]);
+            return $this->redirectToRoute('app_post_images', ['id' => $post->getId()]);
         }
         return $this->render('post/create.html.twig', [
             'form' => $form->createView(),
@@ -98,10 +108,13 @@ final class PostController extends AbstractController
 
         if($post)
         {
-            //pour supprimer les likes aussi en meme temps que le post
-            //  foreach ($post->getLikes() as $like) {
-            //                $manager->remove($like);
-            //            }
+            foreach ($post->getComments() as $comment){
+                $manager->remove($comment);
+            }
+
+            foreach ($post->getLikes() as $like) {
+                $manager->remove($like);
+            }
 
             foreach ($post->getImages() as $image) {
                 $manager->remove($image);

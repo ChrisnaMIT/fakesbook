@@ -31,6 +31,9 @@ class Image
     #[ORM\ManyToOne(inversedBy: 'images')]
     private ?Post $post = null;
 
+    #[ORM\OneToOne(mappedBy: 'image', cascade: ['persist', 'remove'])]
+    private ?Profile $profile = null;
+
     /**
      * If manually uploading a file (i.e. not using Symfony Form) ensure an instance
      * of 'UploadedFile' is injected into this setter to trigger the update. If this
@@ -91,4 +94,50 @@ class Image
 
         return $this;
     }
+
+    public function getProfile(): ?Profile
+    {
+        return $this->profile;
+    }
+
+    public function setProfile(?Profile $profile): static
+    {
+
+        if ($profile === null && $this->profile !== null) {
+            $this->profile->setImage(null);
+        }
+
+
+        if ($profile !== null && $profile->getImage() !== $this) {
+            $profile->setImage($this);
+        }
+
+        $this->profile = $profile;
+
+        return $this;
+    }
+
+    public function serialize()
+    {
+        return serialize(array(
+            $this->imageName,
+        ));
+    }
+
+    public function unserialize(string $data)
+    {
+        return unserialize($data);
+    }
+
+    public function __serialize(): array
+    {
+        return ['imageName' => $this->imageName,];
+    }
+
+    public function __unserialize(array $data): void
+    {
+        $this->imageName = $data['imageName'];
+    }
+
+
 }

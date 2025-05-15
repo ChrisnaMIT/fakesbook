@@ -18,8 +18,8 @@ class Conversation
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
-    #[ORM\ManyToOne(inversedBy: 'conversations')]
-    private ?Profile $participants = null;
+    #[ORM\ManyToMany(targetEntity: Profile::class, inversedBy: 'conversations')]
+    private Collection $participants;
 
     /**
      * @var Collection<int, Message>
@@ -30,6 +30,7 @@ class Conversation
     public function __construct()
     {
         $this->messages = new ArrayCollection();
+        $this->participants = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -49,9 +50,17 @@ class Conversation
         return $this;
     }
 
-    public function getParticipants(): ?Profile
+    public function getParticipants(): ?Collection
     {
         return $this->participants;
+    }
+
+    public function addParticipant(Profile $participant): static
+    {
+        if(!$this->participants->contains($participant)){
+            $this->participants->add($participant);
+        }
+        return $this;
     }
 
     public function setParticipants(?Profile $participants): static
@@ -90,4 +99,6 @@ class Conversation
 
         return $this;
     }
+
+
 }

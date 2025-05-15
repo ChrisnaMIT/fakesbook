@@ -19,6 +19,7 @@ final class LikeController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
 
+
         if($post->isLikedBy($this->getUser())){
             $like = $likeRepository->findOneBy([
                 'post' => $post,
