@@ -12,7 +12,7 @@
             {% for friend in app.user.profile.getFriends %}
                 <div class="flex items-center justify-between p-4 bg-white rounded-md shadow">
                     <div class="flex items-center space-x-4">
-                        <div class="w-10 h-10 rounded-full bg-gray-300"></div> <!-- Avatar fictif -->
+                        <div class="w-10 h-10 rounded-full bg-gray-300"></div>
                         <span class="text-lg font-medium text-gray-800">{{ friend.ofUser.email }}</span>
                     </div>
 
@@ -21,7 +21,6 @@
                             Partager
                         </button>
                     </form>
-
                 </div>
             {% endfor %}
         </div>

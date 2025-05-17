@@ -14,6 +14,16 @@
                 </p>
                 <p>{{ message.content }}</p>
             </div>
+            {% if message.post %}
+                <div class="border p-4 ">
+                    <h3 class="font-bold text-lg">{{ message.post.title }}</h3>
+                    <a href="{{ path('app_post_show', {'id': message.post.id}) }}" class="text-blue-500 underline">
+                        Voir le post
+                    </a>
+                </div>
+
+            {% endif %}
+
         {% endfor %}
 
         {{ form_start(form) }}

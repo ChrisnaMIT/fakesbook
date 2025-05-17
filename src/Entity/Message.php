@@ -14,8 +14,10 @@ class Message
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(type: Types::TEXT)]
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $content = null;
+
 
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
@@ -23,6 +25,9 @@ class Message
     #[ORM\ManyToOne(inversedBy: 'messages')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Profile $author = null;
+
+    #[ORM\ManyToOne(inversedBy: 'messages')]
+    private ?Post $post = null;
 
     #[ORM\ManyToOne(inversedBy: 'messages')]
     private ?Conversation $conversation = null;
@@ -77,6 +82,17 @@ class Message
     {
         $this->conversation = $conversation;
 
+        return $this;
+    }
+
+    public function getPost(): ?Post
+    {
+        return $this->post;
+    }
+
+    public function setPost(?Post $post): self
+    {
+        $this->post = $post;
         return $this;
     }
 }

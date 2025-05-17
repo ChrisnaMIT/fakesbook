@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Conversation;
+use App\Entity\Message;
 use App\Entity\Post;
 use App\Entity\Profile;
 use App\Entity\Share;
@@ -31,6 +32,24 @@ final class ShareController extends AbstractController
         if(!$this->getUser()){
             return $this->redirectToRoute('app_login');
         }
+        $senderProfile = $this->getUser()->getProfile();
+        $conversation = $senderProfile->isChattingWith($recipient);
+
+        if(!$conversation){
+            $conversation =new Conversation();
+            $conversation->addParticipant($senderProfile);
+            $conversation->addParticipant($recipient);
+            $conversation->setCreatedAt(new \DateTimeImmutable());
+            $manager->persist($conversation);
+        }
+
+        $message = new Message();
+        $message->setConversation($conversation);
+        $message->setCreatedAt(new \DateTimeImmutable());
+        $message->setAuthor($senderProfile);
+        $message->setPost($post);
+        $manager->persist($message);
+        $manager->flush();
 
 
         $share= new Share();
