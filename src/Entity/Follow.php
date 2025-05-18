@@ -17,7 +17,7 @@ class Follow
     #[ORM\JoinColumn(nullable: false)]
     private ?Profile $author = null;
 
-    #[ORM\ManyToOne(inversedBy: 'followers')]
+    #[ORM\ManyToOne(inversedBy: null)]
     #[ORM\JoinColumn(nullable: false)]
     private ?Profile $target = null;
 

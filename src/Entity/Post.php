@@ -29,6 +29,9 @@ class Post
     #[ORM\Column]
     private ?\DateTime $createdAt = null;
 
+    #[ORM\OneToMany(mappedBy: 'post', targetEntity: Message::class)]
+    private Collection $messages;
+
     /**
      * @var Collection<int, Comment>
      */
@@ -62,6 +65,7 @@ class Post
         $this->likes = new ArrayCollection();
         $this->images = new ArrayCollection();
         $this->shares = new ArrayCollection();
+        $this->messages = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -259,4 +263,31 @@ class Post
 
         return $this;
     }
+
+    public function getMessages(): Collection
+    {
+        return $this->messages;
+    }
+
+    public function addMessage(Message $message): static
+    {
+        if (!$this->messages->contains($message)) {
+            $this->messages[] = $message;
+            $message->setPost($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMessage(Message $message): static
+    {
+        if ($this->messages->removeElement($message)) {
+            if ($message->getPost() === $this) {
+                $message->setPost(null);
+            }
+        }
+
+        return $this;
+    }
+
 }

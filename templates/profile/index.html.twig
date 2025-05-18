@@ -36,7 +36,7 @@
 
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full">
             {% for post in posts %}
-                {% for img in post.image %}
+                {% for image in post.images %}
                     <div class="bg-white rounded-lg shadow hover:shadow-md transition">
                         <a href="{{ path('app_post_show', {id: post.id}) }}">
                             <img src="{{ vich_uploader_asset(img, 'imageFile') | imagine_filter('imagePost') }}"

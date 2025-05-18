@@ -17,7 +17,7 @@ class FriendRequest
     #[ORM\JoinColumn(nullable: false)]
     private ?Profile $sender = null;
 
-    #[ORM\ManyToOne(inversedBy: 'receviedSendRequest')]
+    #[ORM\ManyToOne(inversedBy: 'receivedFriendRequests')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Profile $recipient = null;
 

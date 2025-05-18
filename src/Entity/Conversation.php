@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\Message;
 use App\Repository\ConversationRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -27,6 +28,7 @@ class Conversation
     #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'conversation')]
     private Collection $messages;
 
+    
     public function __construct()
     {
         $this->messages = new ArrayCollection();
