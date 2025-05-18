@@ -1,0 +1,137 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+
+
+    <div class="max-w-2xl mx-auto mt-8 space-y-6">
+
+
+
+        {% for post in posts %}
+            <div class="bg-yellow-100 rounded-2xl shadow p-6">
+
+                <div class="flex items-center mb-4">
+
+
+                    {% if post.author.profile and post.author.profile.image and post.author.profile.image.imageName %}
+
+                        <img
+                                src="{{ vich_uploader_asset(post.author.profile.image, 'imageFile') | imagine_filter('imageProfile') }}"
+                                alt="Photo de profil"
+                                class="w-10 h-10 rounded-full object-cover border border-gray-400"
+                        >
+                    {% else %}
+                        <div class="w-10 h-10 rounded-full bg-gray-300"></div>
+                    {% endif %}
+
+
+
+                    <div>
+                        <p class="font-semibold">{{ post.author.email }}</p>
+                        <p class="text-sm text-gray-600">{{ post.createdAt|date('d/m/Y') }}</p>
+                    </div>
+                </div>
+
+
+                <p class="text-gray-800 mb-4 whitespace-pre-line">Le titre: {{ post.title }}</p>
+                <p class="text-gray-800 mb-4 whitespace-pre-line">{{ post.content }}</p>
+
+
+
+                {% for image in post.images %}
+                    <img src="{{ vich_uploader_asset(image, 'imageFile') }}" alt="" class="rounded-xl max-w-xs h-auto mb-5">
+                {% endfor %}
+
+
+                 {% include 'like/like.html.twig' %}
+                <br>
+
+
+                {% if app.user and app.user == post.author %}
+                    <form method="post" action="{{ path('app_post_delete', {id: post.id}) }}" onsubmit="return confirm('Voulez-vous vraiment supprimer ce post ?');">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ post.id) }}">
+                        <button class="bg-red-500 text-white px-4 py-2 rounded">Supprimer</button>
+                    </form>
+                {% endif %}
+
+                <a href="{{ path('app_share_with', {id:post.id}) }}" class="px-4 py-2 bg-green-500 text-white rounded-full hover:bg-green-600 transition">
+                    Partager
+                </a>
+
+                <hr class="w-48 h-1 mx-auto my-4 bg-gray-100 border-0 rounded-sm md:my-10 dark:bg-gray-700">
+                {% for comment in post.comments %}
+                    <div class="mb-4">
+                        <div class="flex items-center mb-2">
+                            {% if post.author.profile and post.author.profile.image and post.author.profile.image.imageName %}
+
+                                <img
+                                        src="{{ vich_uploader_asset(post.author.profile.image, 'imageFile') | imagine_filter('imageProfile') }}"
+                                        alt="Photo de profil"
+                                        class="w-10 h-10 rounded-full object-cover border border-gray-400"
+                                >
+                            {% else %}
+                                <div class="w-10 h-10 rounded-full bg-gray-300"></div>
+                            {% endif %}
+                            <div>
+                                <p class="pt-6 font-semibold text-sm">{{ comment.author.email }}</p>
+                                <p class="text-xs text-gray-500">{{ comment.createdAt|date('d/m/Y') }}</p>
+                            </div>
+                        </div>
+                        <div class="bg-white p-3 rounded-xl shadow-inner">
+                            <p class="text-gray-800">{{ comment.content }}</p>
+                        </div>
+
+                        {#  {% include 'like/like.html.twig' %} Bouton like pour les commentaires #}
+                        <br>
+                    </div>
+                {% else %}
+                    <p class="text-sm text-gray-400 whitespace-pre-line">Aucun commentaire pour l’instant.</p>
+                {% endfor %}
+
+
+
+
+
+                {% if app.user %}
+                    {{ form_start(commentForms[post.id], { action: path('app_comment', {id: post.id}) }) }}
+                    <div class="flex items-center gap-3 mt-6">
+                        {% if post.author.profile and post.author.profile.image and post.author.profile.image.imageName %}
+
+                            <img
+                                    src="{{ vich_uploader_asset(post.author.profile.image, 'imageFile') | imagine_filter('imageProfile') }}"
+                                    alt="Photo de profil"
+                                    class="w-10 h-10 rounded-full object-cover border border-gray-400"
+                            >
+                        {% else %}
+                            <div class="w-10 h-10 rounded-full bg-gray-300"></div>
+                        {% endif %}
+                        <div class="flex-grow">
+                            {{ form_widget(commentForms[post.id].content, {
+                                'attr': {
+                                    'placeholder': 'Écrire un commentaire...',
+                                    'class': 'w-full border rounded-xl px-4 py-2 focus:outline-none'
+                                }
+                            }) }}
+                            <br>
+                        </div>
+                        <button type="submit" class="text-xl">Envoyer</button>
+                    </div>
+                    {{ form_end(commentForms[post.id]) }}
+                {% endif %}
+
+                <div class="mt-5">
+                    <a href="{{ path('app_post_show', {id:post.id}) }}" class="mt-2 bg-gradient-to-r from-red-200 via-red-300 to-yellow-200 hover:bg-gradient-to-bl text-white px-4 py-2  rounded hover:bg-yellow-600">Voir le post</a>
+                </div>
+
+            </div>
+
+        {% endfor %}
+
+        <div class="navigation">
+            {{ knp_pagination_render(pagination, "pagination/pagination.html.twig") }}
+        </div>
+
+
+    </div>
+{% endblock %}

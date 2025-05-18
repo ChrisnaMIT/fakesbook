@@ -1,0 +1,20 @@
+{% block javascript %}
+
+<script type="module">
+    import '{{ asset('like.js') }}';
+</script>
+
+{% endblock %}
+
+{% if app.user %}
+
+    <a href="{{ path('app_like_post', {id: post.id}) }}" class="like inline-flex items-center px-4 py-2 bg-blue-200 text-white text-sm font-medium rounded hover:bg-blue-700 transition">
+        <span>👍</span>
+        <span class="ml-2 text-sm font-semibold text-white nbrLikes">
+    <i class="bi bi-hand-thumbs-up{% if post.isLikedBy(app.user) %}-fill{% endif %}"></i>
+            {{ post.likes | length }}
+        </span>
+    </a>
+
+
+{% endif %}

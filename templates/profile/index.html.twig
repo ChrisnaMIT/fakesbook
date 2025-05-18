@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon Profil{% endblock %}
+
+{% block body %}
+    <div class="flex flex-col items-center w-full max-w-4xl mx-auto mt-6 bg-yellow-100 rounded-xl p-6 shadow-lg">
+
+
+        <div class="mb-4">
+            {% if app.user.profile.image and app.user.profile.image.imageName %}
+                <img class="w-24 h-24 rounded-full border-2 border-blue-500 object-cover"
+                     src="{{ vich_uploader_asset(app.user.profile.image, 'imageFile') | imagine_filter('imageProfile') }}"
+                     alt="Photo de profil" />
+            {% else %}
+                <div class="w-24 h-24 rounded-full bg-gray-300"></div>
+            {% endif %}
+        </div>
+
+
+        <div class="mb-2 text-center">
+            {% if app.user.profile.displayName %}
+                <p class="text-xl font-semibold">{{ app.user.profile.displayName }}</p>
+            {% else %}
+                <p class="text-xl font-semibold text-gray-600">{{ app.user.email }}</p>
+            {% endif %}
+        </div>
+
+
+        {% include 'follow/follow.html.twig' %}
+
+        <div class="mb-8">
+            <a href="{{ path('app_addImageProfile', {id: app.user.profile.id}) }}"
+               class="text-sm text-blue-600 hover:underline">Ajouter une nouvelle photo de profil</a>
+        </div>
+
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full">
+            {% for post in posts %}
+                {% for img in post.image %}
+                    <div class="bg-white rounded-lg shadow hover:shadow-md transition">
+                        <a href="{{ path('app_post_show', {id: post.id}) }}">
+                            <img src="{{ vich_uploader_asset(img, 'imageFile') | imagine_filter('imagePost') }}"
+                                 alt="Image du post"
+                                 class="w-full h-48 object-cover rounded-t-lg" />
+                        </a>
+                    </div>
+
+                {% endfor %}
+            {% else %}
+                <p class="text-center col-span-full text-gray-500">Aucun post pour ce profil.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+
+{% endblock %}

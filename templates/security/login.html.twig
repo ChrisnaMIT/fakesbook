@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Connexion{% endblock %}
+
+{% block body %}
+    <div class="min-h-screen flex items-center justify-center bg-gray-100">
+        <div class="bg-indigo-200 p-8 rounded-xl shadow-md w-full max-w-md">
+            <h1 class="text-3xl font-bold text-center mb-6">Se connecter</h1>
+
+            {% if error %}
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                    {{ error.messageKey|trans(error.messageData, 'security') }}
+                </div>
+            {% endif %}
+
+            {% if app.user %}
+                <div class="mb-3 text-center">
+                    Connecté en tant que {{ app.user.userIdentifier }},
+                    <a href="{{ path('app_logout') }}" class="text-blue-700 underline">Se déconnecter</a>
+                </div>
+            {% endif %}
+
+            <form method="post">
+                <div class="mb-4">
+                    <label for="inputEmail" class="block font-semibold mb-1">Email</label>
+                    <input type="email" value="{{ last_username }}" name="email" id="inputEmail"
+                           class="w-full px-4 py-2 border border-gray-300 rounded-md" required autofocus>
+                </div>
+
+                <div class="mb-4">
+                    <label for="inputPassword" class="block font-semibold mb-1">Mot de passe</label>
+                    <input type="password" name="password" id="inputPassword"
+                           class="w-full px-4 py-2 border border-gray-300 rounded-md" required>
+                </div>
+
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                <div class="mb-4 flex items-center">
+                    <input type="checkbox" name="_remember_me" id="remember_me" class="mr-2">
+                    <label for="remember_me">Se souvenir de moi</label>
+                </div>
+
+                <button class="bg-cyan-300 text-black px-4 py-2 rounded-md hover:bg-cyan-400 transition font-semibold">
+                    Se connecter
+                </button>
+
+                <a href="{{ path('connect_google_start') }}">Connexion avec google</a>
+            </form>
+
+
+
+            <div class="mt-10 text-center">
+                <p class="text-xl font-bold mb-4">Pas de compte ?</p>
+                <a href="{{ path('app_register') }}"
+                   class="block bg-blue-200 hover:bg-blue-300 text-black font-semibold py-2 px-4 rounded-lg">
+                    Se créer un compte
+                </a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,107 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="max-w-2xl mx-auto mt-10 space-y-6">
+
+
+        <div class="bg-blue-500 rounded-2xl shadow p-6">
+            <div class="flex items-center mb-4">
+                <div class="w-16 h-16 rounded-full bg-gray-300 mr-4"></div>
+                <div>
+                    <p class="font-semibold">{{ post.author.email }}</p>
+                    <p class="text-sm text-gray-600">{{ post.createdAt|date('d/m/Y') }}</p>
+
+                </div>
+            </div>
+
+            <h2 class="text-xl font-bold mb-2">{{ post.title }}</h2>
+            <p class="text-gray-800 mb-4 whitespace-pre-line">{{ post.content }}</p>
+
+
+            <div class="flex justify-center flex-wrap gap-4 mb-4">
+                {% for image in post.images %}
+                    <img src="{{ vich_uploader_asset(image, 'imageFile') | imagine_filter('postshow') }}"
+                         alt=""
+                         class="rounded-xl max-w-full h-auto max-w-md">
+                {% endfor %}
+            </div>
+
+
+           {% include 'like/like.html.twig' %}
+
+
+
+            {# Changer l'emplacement des ces boutons  #}
+            <div class="flex gap-3 mb-4">
+                {# Bouton supprimer #}
+                {% if app.user and app.user == post.author %}
+                    <form method="post" action="{{ path('app_post_delete', {id: post.id}) }}" onsubmit="return confirm('Voulez-vous vraiment supprimer ce post ?');">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ post.id) }}">
+                        <button class="bg-red-500 text-white px-4 py-2 rounded">Supprimer</button>
+                    </form>
+                {% endif %}
+
+                <a href="{{ path('app_post') }}" class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">Retour</a>
+
+                {# Bouton changer image #}
+                {% if app.user and app.user == post.author %}
+                    <form method="post" action="{{ path('app_post_images', {id: post.id}) }}">
+                        <input type="hidden">
+                        <button class="bg-green-500 text-white px-4 py-2 rounded">Changer l'image</button>
+                    </form>
+                {% endif %}
+
+
+            </div>
+        </div>
+
+
+
+            {% for comment in post.comments %}
+                <div class="mb-6 border-b pb-4">
+                    <div class="flex items-start mb-2">
+                        {% if post.author.profile and post.author.profile.image and post.author.profile.image.imageName %}
+
+                            <img
+                                    src="{{ vich_uploader_asset(post.author.profile.image, 'imageFile') | imagine_filter('imageProfile') }}"
+                                    alt="Photo de profil"
+                                    class="w-10 h-10 rounded-full object-cover border border-gray-400"
+                            >
+                        {% else %}
+                            <div class="w-10 h-10 rounded-full bg-gray-300"></div>
+                        {% endif %}
+                        <div>
+                            <p class="font-semibold">{{ comment.author.email }}</p>
+                            <p class="text-sm text-gray-500">{{ comment.createdAt|date('d M Y') }}</p>
+                        </div>
+                    </div>
+                    <div class="border rounded-xl p-3 bg-gray-50">
+                        <p class="text-gray-800">{{ comment.content }}</p>
+                    </div>
+
+
+                </div>
+            {% else %}
+                <p class="text-center text-gray-400">Aucun commentaire pour l’instant.</p>
+            {% endfor %}
+
+
+            {% if app.user %}
+                {{ form_start(form, { action: path('app_comment', {id: post.id}) }) }}
+                <div class="flex items-center gap-3 mt-6">
+                    <div class="w-10 h-10 rounded-full bg-gray-300"></div>
+                    <div class="flex-grow">
+                        {{ form_widget(form.content, {
+                            'attr': {
+                                'placeholder': 'Écrire un commentaire...',
+                                'class': 'w-full border rounded-xl px-4 py-2 focus:outline-none'
+                            }
+                        }) }}
+                    </div>
+                    <button type="submit" class="text-xl">Envoyer </button>
+                </div>
+                {{ form_end(form) }}
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

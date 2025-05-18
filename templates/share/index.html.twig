@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Partager le post !{% endblock %}
+
+{% block body %}
+    <div class="max-w-2xl mx-auto mt-10 p-6 bg-yellow-100 border border-blue-300 rounded-xl shadow-lg">
+        <h1 class="text-2xl font-bold mb-6 text-center">Partager ce post #{{ post.id }}</h1>
+
+        <p class="text-lg font-semibold mb-4">Avec :</p>
+
+        <div class="space-y-4">
+            {% for friend in app.user.profile.getFriends %}
+                <div class="flex items-center justify-between p-4 bg-white rounded-md shadow">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-10 h-10 rounded-full bg-gray-300"></div>
+                        <span class="text-lg font-medium text-gray-800">{{ friend.ofUser.email }}</span>
+                    </div>
+
+                    <form action="{{ path('app_share', { post: post.id, recipient: friend.id }) }}" method="get">
+                        <button type="submit" class="px-4 py-2 bg-green-500 text-white rounded-full hover:bg-green-600 transition">
+                            Partager
+                        </button>
+                    </form>
+                </div>
+            {% endfor %}
+        </div>
+        <a href="{{ path('app_post') }}" class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">Retour</a>
+    </div>
+
+{% endblock %}
+

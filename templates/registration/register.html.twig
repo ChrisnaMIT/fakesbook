@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Register{% endblock %}
+
+{% block body %}
+    <div class="min-h-screen flex items-center justify-center bg-gray-100">
+        <div class="bg-indigo-200 p-8 rounded-xl shadow-md w-full max-w-md">
+            <h1 class="text-3xl font-bold text-center mb-6">Se créer un compte</h1>
+
+            <div class="flex justify-center mb-6">
+                <div class="w-24 h-24 bg-gray-300 rounded-full"></div>
+            </div>
+
+            {{ form_start(registrationForm) }}
+
+            <div class="mb-4">
+                {{ form_row(registrationForm.email, {
+                    attr: { class: 'w-full px-4 py-2 border border-gray-300 rounded-md', placeholder: 'Email' }
+                }) }}
+            </div>
+
+            <div class="mb-4">
+                {{ form_row(registrationForm.plainPassword, {
+                    label: 'Mot de passe',
+                    attr: { class: 'w-full px-4 py-2 border border-gray-300 rounded-md', placeholder: 'Mot de passe' }
+                }) }}
+            </div>
+
+            <div class="mb-4">
+                {{ form_row(registrationForm.agreeTerms) }}
+            </div>
+
+            <button type="submit" class="bg-cyan-300 text-black px-4 py-2 rounded-md hover:bg-cyan-400 transition w-full font-semibold">
+                Créer le compte
+            </button>
+
+            {{ form_end(registrationForm) }}
+        </div>
+    </div>
+{% endblock %}
