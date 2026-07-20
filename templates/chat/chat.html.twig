@@ -1,37 +1,35 @@
 {% extends 'base.html.twig' %}
-
-{% block title %}Chat{% endblock %}
-
+{% block title %}Conversation · Fakebook{% endblock %}
 {% block body %}
-    <div class="max-w-2xl mx-auto my-8 space-y-6 p-6 bg-white rounded shadow">
-        <h2 class="text-xl font-bold">Conversation</h2>
-
-        {% for message in chat.messages %}
-
-            <div class="border-b pb-2 mb-2">
-                <p class="text-sm text-gray-500">
-                    {{ message.createdAt|date('d/m/Y H:i') }} - <strong>{{ message.author.ofUser.email }}</strong>
-                </p>
-                <p>{{ message.content }}</p>
-            </div>
-            {% if message.post %}
-                <div class="border p-4 ">
-                    <h3 class="font-bold text-lg">{{ message.post.title }}</h3>
-                    <a href="{{ path('app_post_show', {'id': message.post.id}) }}" class="text-blue-500 underline">
-                        Voir le post
-                    </a>
+<div class="mx-auto flex min-h-[calc(100vh-5rem)] max-w-5xl px-4 py-6">
+    <section class="flex w-full flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl shadow-slate-200/50">
+        <header class="flex items-center gap-3 border-b border-slate-100 px-5 py-4">
+            <a href="{{ path('app_people') }}" class="flex h-10 w-10 items-center justify-center rounded-full text-slate-500 hover:bg-slate-100">←</a>
+            <span class="flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 font-bold text-white">💬</span>
+            <div><h1 class="font-black">Conversation</h1><p class="text-xs font-medium text-emerald-500">Discussion Fakebook</p></div>
+        </header>
+        <div class="flex-1 space-y-4 overflow-y-auto bg-slate-50/60 p-5 sm:p-8">
+            {% for message in chat.messages %}
+                {% set mine = message.author.ofUser == app.user %}
+                <div class="flex {% if mine %}justify-end{% else %}justify-start{% endif %}">
+                    <div class="max-w-[82%] sm:max-w-[65%]">
+                        <div class="rounded-3xl px-4 py-3 shadow-sm {% if mine %}rounded-br-md bg-blue-600 text-white{% else %}rounded-bl-md border border-slate-200 bg-white text-slate-800{% endif %}">
+                            <p class="whitespace-pre-line text-sm leading-6">{{ message.content }}</p>
+                            {% if message.post %}
+                                <a href="{{ path('app_post_show', {id: message.post.id}) }}" class="mt-3 block rounded-2xl border p-3 text-sm font-bold {% if mine %}border-blue-400 bg-blue-500{% else %}border-slate-200 bg-slate-50 text-blue-600{% endif %}">Publication partagée · {{ message.post.title }} →</a>
+                            {% endif %}
+                        </div>
+                        <p class="mt-1 px-2 text-[11px] text-slate-400 {% if mine %}text-right{% endif %}">{{ message.createdAt|date('d/m/Y H:i') }} · {{ message.author.ofUser.email }}</p>
+                    </div>
                 </div>
-
-            {% endif %}
-
-        {% endfor %}
-
-        {{ form_start(form) }}
-        {{ form_widget(form.content, {'attr': {'class': 'w-full p-2 border rounded', 'placeholder': 'Écris ton message...'}}) }}
-        <button type="submit" class="mt-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Envoyer</button>
+            {% else %}
+                <div class="flex h-full flex-col items-center justify-center py-16 text-center"><span class="text-5xl">👋</span><h2 class="mt-4 text-xl font-black">Commence la conversation</h2><p class="mt-2 text-sm text-slate-500">Envoie ton premier message.</p></div>
+            {% endfor %}
+        </div>
+        {{ form_start(form, {attr: {class: 'flex items-end gap-3 border-t border-slate-100 bg-white p-4'}}) }}
+            {{ form_widget(form.content, {attr: {class: 'min-h-11 flex-1 resize-none rounded-2xl border-0 bg-slate-100 px-4 py-3 focus:ring-2 focus:ring-blue-500', placeholder: 'Écris ton message…'}}) }}
+            <button type="submit" class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-blue-600 font-bold text-white shadow-lg shadow-blue-200 hover:bg-blue-700">➤</button>
         {{ form_end(form) }}
-        <br>
-        <a href="{{ path('app_people') }}" class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">Retour</a>
-    </div>
-
+    </section>
+</div>
 {% endblock %}
