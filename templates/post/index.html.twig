@@ -1,137 +1,135 @@
 {% extends 'base.html.twig' %}
-
+{% block title %}Fil d’actualité · Fakebook{% endblock %}
 {% block body %}
-
-
-
-    <div class="max-w-2xl mx-auto mt-8 space-y-6">
-
-
-
-        {% for post in posts %}
-            <div class="bg-yellow-100 rounded-2xl shadow p-6">
-
-                <div class="flex items-center mb-4">
-
-
-                    {% if post.author.profile and post.author.profile.image and post.author.profile.image.imageName %}
-
-                        <img
-                                src="{{ vich_uploader_asset(post.author.profile.image, 'imageFile') | imagine_filter('imageProfile') }}"
-                                alt="Photo de profil"
-                                class="w-10 h-10 rounded-full object-cover border border-gray-400"
-                        >
+<div class="mx-auto grid max-w-[1440px] grid-cols-1 gap-6 px-4 py-6 lg:grid-cols-[240px_minmax(0,680px)_300px] lg:px-6">
+    <aside class="hidden lg:block">
+        <div class="sticky top-24 space-y-2">
+            {% if app.user.profile %}
+                <a href="{{ path('app_profile', {id: app.user.profile.id}) }}" class="flex items-center gap-3 rounded-2xl p-3 font-semibold hover:bg-white hover:shadow-sm">
+                    {% if app.user.profile.image and app.user.profile.image.imageName %}
+                        <img src="{{ vich_uploader_asset(app.user.profile.image, 'imageFile') | imagine_filter('imageProfile') }}" class="h-11 w-11 rounded-full object-cover" alt="">
                     {% else %}
-                        <div class="w-10 h-10 rounded-full bg-gray-300"></div>
+                        <span class="flex h-11 w-11 items-center justify-center rounded-full bg-blue-600 font-bold text-white">{{ app.user.email|first|upper }}</span>
                     {% endif %}
-
-
-
-                    <div>
-                        <p class="font-semibold">{{ post.author.email }}</p>
-                        <p class="text-sm text-gray-600">{{ post.createdAt|date('d/m/Y') }}</p>
-                    </div>
-                </div>
-
-
-                <p class="text-gray-800 mb-4 whitespace-pre-line">Le titre: {{ post.title }}</p>
-                <p class="text-gray-800 mb-4 whitespace-pre-line">{{ post.content }}</p>
-
-
-
-                {% for image in post.images %}
-                    <img src="{{ vich_uploader_asset(image, 'imageFile') }}" alt="" class="rounded-xl max-w-xs h-auto mb-5">
-                {% endfor %}
-
-
-                 {% include 'like/like.html.twig' %}
-                <br>
-
-
-                {% if app.user and app.user == post.author %}
-                    <form method="post" action="{{ path('app_post_delete', {id: post.id}) }}" onsubmit="return confirm('Voulez-vous vraiment supprimer ce post ?');">
-                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ post.id) }}">
-                        <button class="bg-red-500 text-white px-4 py-2 rounded">Supprimer</button>
-                    </form>
-                {% endif %}
-
-                <a href="{{ path('app_share_with', {id:post.id}) }}" class="px-4 py-2 bg-green-500 text-white rounded-full hover:bg-green-600 transition">
-                    Partager
+                    <span class="min-w-0 truncate">{{ app.user.profile.displayName ?: app.user.email }}</span>
                 </a>
+            {% endif %}
+            <a href="{{ path('app_post') }}" class="flex items-center gap-3 rounded-2xl bg-blue-50 p-3 font-semibold text-blue-700"><span class="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 text-white">⌂</span>Fil d’actualité</a>
+            <a href="{{ path('app_people') }}" class="flex items-center gap-3 rounded-2xl p-3 font-semibold text-slate-600 hover:bg-white"><span class="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-100">👥</span>Amis</a>
+            <a href="{{ path('app_notification') }}" class="flex items-center gap-3 rounded-2xl p-3 font-semibold text-slate-600 hover:bg-white"><span class="flex h-10 w-10 items-center justify-center rounded-xl bg-rose-100">♡</span>Notifications</a>
+            {% if 'ROLE_ADMIN' in app.user.roles %}
+                <a href="{{ path('app_admin') }}" class="flex items-center gap-3 rounded-2xl p-3 font-semibold text-slate-600 hover:bg-white"><span class="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-100">⚙</span>Administration</a>
+            {% endif %}
+        </div>
+    </aside>
 
-                <hr class="w-48 h-1 mx-auto my-4 bg-gray-100 border-0 rounded-sm md:my-10 dark:bg-gray-700">
-                {% for comment in post.comments %}
-                    <div class="mb-4">
-                        <div class="flex items-center mb-2">
-                            {% if post.author.profile and post.author.profile.image and post.author.profile.image.imageName %}
-
-                                <img
-                                        src="{{ vich_uploader_asset(post.author.profile.image, 'imageFile') | imagine_filter('imageProfile') }}"
-                                        alt="Photo de profil"
-                                        class="w-10 h-10 rounded-full object-cover border border-gray-400"
-                                >
-                            {% else %}
-                                <div class="w-10 h-10 rounded-full bg-gray-300"></div>
-                            {% endif %}
-                            <div>
-                                <p class="pt-6 font-semibold text-sm">{{ comment.author.email }}</p>
-                                <p class="text-xs text-gray-500">{{ comment.createdAt|date('d/m/Y') }}</p>
-                            </div>
-                        </div>
-                        <div class="bg-white p-3 rounded-xl shadow-inner">
-                            <p class="text-gray-800">{{ comment.content }}</p>
-                        </div>
-
-                        {#  {% include 'like/like.html.twig' %} Bouton like pour les commentaires #}
-                        <br>
-                    </div>
+    <section class="min-w-0 space-y-5">
+        <div class="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
+            <div class="flex items-center gap-3">
+                {% if app.user.profile and app.user.profile.image and app.user.profile.image.imageName %}
+                    <img src="{{ vich_uploader_asset(app.user.profile.image, 'imageFile') | imagine_filter('imageProfile') }}" class="h-11 w-11 rounded-full object-cover" alt="">
                 {% else %}
-                    <p class="text-sm text-gray-400 whitespace-pre-line">Aucun commentaire pour l’instant.</p>
-                {% endfor %}
-
-
-
-
-
-                {% if app.user %}
-                    {{ form_start(commentForms[post.id], { action: path('app_comment', {id: post.id}) }) }}
-                    <div class="flex items-center gap-3 mt-6">
-                        {% if post.author.profile and post.author.profile.image and post.author.profile.image.imageName %}
-
-                            <img
-                                    src="{{ vich_uploader_asset(post.author.profile.image, 'imageFile') | imagine_filter('imageProfile') }}"
-                                    alt="Photo de profil"
-                                    class="w-10 h-10 rounded-full object-cover border border-gray-400"
-                            >
-                        {% else %}
-                            <div class="w-10 h-10 rounded-full bg-gray-300"></div>
-                        {% endif %}
-                        <div class="flex-grow">
-                            {{ form_widget(commentForms[post.id].content, {
-                                'attr': {
-                                    'placeholder': 'Écrire un commentaire...',
-                                    'class': 'w-full border rounded-xl px-4 py-2 focus:outline-none'
-                                }
-                            }) }}
-                            <br>
-                        </div>
-                        <button type="submit" class="text-xl">Envoyer</button>
-                    </div>
-                    {{ form_end(commentForms[post.id]) }}
+                    <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-blue-600 font-bold text-white">{{ app.user.email|first|upper }}</span>
                 {% endif %}
-
-                <div class="mt-5">
-                    <a href="{{ path('app_post_show', {id:post.id}) }}" class="mt-2 bg-gradient-to-r from-red-200 via-red-300 to-yellow-200 hover:bg-gradient-to-bl text-white px-4 py-2  rounded hover:bg-yellow-600">Voir le post</a>
-                </div>
-
+                <a href="{{ path('app_post_create') }}" class="flex-1 rounded-full bg-slate-100 px-5 py-3 text-left text-slate-500 transition hover:bg-slate-200">Quoi de neuf, {{ app.user.profile and app.user.profile.displayName ? app.user.profile.displayName : app.user.email|split('@')|first }} ?</a>
             </div>
-
-        {% endfor %}
-
-        <div class="navigation">
-            {{ knp_pagination_render(pagination, "pagination/pagination.html.twig") }}
+            <div class="mt-4 flex border-t border-slate-100 pt-3">
+                <a href="{{ path('app_post_create') }}" class="flex flex-1 items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-semibold text-slate-500 hover:bg-slate-50"><span class="text-emerald-500">▣</span> Photo</a>
+                <a href="{{ path('app_post_create') }}" class="flex flex-1 items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-semibold text-slate-500 hover:bg-slate-50"><span class="text-blue-500">✎</span> Publication</a>
+            </div>
         </div>
 
+        {% for post in posts %}
+            <article class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition hover:shadow-md">
+                <div class="flex items-start gap-3 p-5 pb-3">
+                    {% if post.author.profile and post.author.profile.image and post.author.profile.image.imageName %}
+                        <img src="{{ vich_uploader_asset(post.author.profile.image, 'imageFile') | imagine_filter('imageProfile') }}" alt="" class="h-12 w-12 rounded-full object-cover ring-2 ring-white">
+                    {% else %}
+                        <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 font-bold text-white">{{ post.author.email|first|upper }}</span>
+                    {% endif %}
+                    <div class="min-w-0 flex-1">
+                        <p class="truncate font-bold text-slate-900">{{ post.author.profile and post.author.profile.displayName ? post.author.profile.displayName : post.author.email }}</p>
+                        <p class="text-xs text-slate-400">{{ post.createdAt|date('d/m/Y à H:i') }} · Public</p>
+                    </div>
+                    {% if app.user == post.author %}
+                        <form method="post" action="{{ path('app_post_delete', {id: post.id}) }}" onsubmit="return confirm('Voulez-vous vraiment supprimer ce post ?');">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ post.id) }}">
+                            <button class="flex h-9 w-9 items-center justify-center rounded-full text-slate-400 hover:bg-rose-50 hover:text-rose-600" title="Supprimer">×</button>
+                        </form>
+                    {% endif %}
+                </div>
+                <div class="px-5 pb-4">
+                    {% if post.title %}<h2 class="mb-2 text-lg font-bold text-slate-900">{{ post.title }}</h2>{% endif %}
+                    <p class="whitespace-pre-line leading-7 text-slate-700">{{ post.content }}</p>
+                </div>
 
-    </div>
+                {% if post.images|length %}
+                    <div class="{% if post.images|length > 1 %}grid grid-cols-2 gap-0.5{% endif %} bg-slate-100">
+                        {% for image in post.images %}
+                            <a href="{{ path('app_post_show', {id: post.id}) }}" class="block overflow-hidden">
+                                <img src="{{ vich_uploader_asset(image, 'imageFile') }}" alt="Image de la publication" class="max-h-[620px] w-full object-cover transition duration-500 hover:scale-[1.02]">
+                            </a>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <div class="px-5">
+                    <div class="flex items-center justify-between border-b border-slate-100 py-3 text-sm text-slate-500">
+                        <span>{{ post.likes|length }} J’aime</span>
+                        <a href="{{ path('app_post_show', {id: post.id}) }}" class="hover:underline">{{ post.comments|length }} commentaire{% if post.comments|length != 1 %}s{% endif %}</a>
+                    </div>
+                    <div class="flex items-center py-1">
+                        {% include 'like/like.html.twig' %}
+                        <a href="{{ path('app_post_show', {id: post.id}) }}" class="flex flex-1 items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-semibold text-slate-500 hover:bg-slate-50">💬 <span>Commenter</span></a>
+                        <a href="{{ path('app_share_with', {id: post.id}) }}" class="flex flex-1 items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-semibold text-slate-500 hover:bg-slate-50">↗ <span>Partager</span></a>
+                    </div>
+
+                    {% if post.comments|length %}
+                        <div class="space-y-3 border-t border-slate-100 py-4">
+                            {% for comment in post.comments|slice(0, 2) %}
+                                <div class="flex items-start gap-2.5">
+                                    {% if comment.author.profile and comment.author.profile.image and comment.author.profile.image.imageName %}
+                                        <img src="{{ vich_uploader_asset(comment.author.profile.image, 'imageFile') | imagine_filter('imageProfile') }}" class="h-8 w-8 rounded-full object-cover" alt="">
+                                    {% else %}
+                                        <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-200 text-xs font-bold">{{ comment.author.email|first|upper }}</span>
+                                    {% endif %}
+                                    <div class="rounded-2xl bg-slate-100 px-3.5 py-2">
+                                        <p class="text-xs font-bold">{{ comment.author.profile and comment.author.profile.displayName ? comment.author.profile.displayName : comment.author.email }}</p>
+                                        <p class="text-sm text-slate-700">{{ comment.content }}</p>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    {% if app.user %}
+                        {{ form_start(commentForms[post.id], {action: path('app_comment', {id: post.id}), attr: {class: 'flex items-center gap-2 border-t border-slate-100 py-4'}}) }}
+                            {{ form_widget(commentForms[post.id].content, {attr: {placeholder: 'Écrire un commentaire…', class: 'min-w-0 flex-1 rounded-full border-0 bg-slate-100 px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500'}}) }}
+                            <button type="submit" class="flex h-10 w-10 items-center justify-center rounded-full bg-blue-600 font-bold text-white hover:bg-blue-700">➤</button>
+                        {{ form_end(commentForms[post.id]) }}
+                    {% endif %}
+                </div>
+            </article>
+        {% else %}
+            <div class="rounded-3xl border border-dashed border-slate-300 bg-white p-12 text-center">
+                <div class="text-5xl">✦</div>
+                <h2 class="mt-4 text-xl font-bold">Ton fil est encore vide</h2>
+                <p class="mt-2 text-slate-500">Publie quelque chose ou ajoute de nouveaux amis.</p>
+                <a href="{{ path('app_post_create') }}" class="mt-5 inline-flex rounded-xl bg-blue-600 px-5 py-3 font-semibold text-white">Créer une publication</a>
+            </div>
+        {% endfor %}
+        {{ knp_pagination_render(pagination, 'pagination/pagination.html.twig') }}
+    </section>
+
+    <aside class="hidden lg:block">
+        <div class="sticky top-24 space-y-5">
+            <div class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+                <div class="mb-4 flex items-center justify-between"><h2 class="font-bold">Raccourcis</h2><span class="text-xs text-slate-400">Fakebook</span></div>
+                <a href="{{ path('app_people') }}" class="flex items-center gap-3 rounded-xl p-2.5 text-sm font-semibold hover:bg-slate-50"><span class="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-100">👋</span>Découvrir des personnes</a>
+                <a href="{{ path('app_notification') }}" class="flex items-center gap-3 rounded-xl p-2.5 text-sm font-semibold hover:bg-slate-50"><span class="flex h-9 w-9 items-center justify-center rounded-xl bg-rose-100">🔔</span>Voir les notifications</a>
+            </div>
+            <div class="px-2 text-xs leading-5 text-slate-400">Confidentialité · Conditions · Aide<br>Fakebook © {{ 'now'|date('Y') }}</div>
+        </div>
+    </aside>
+</div>
 {% endblock %}
