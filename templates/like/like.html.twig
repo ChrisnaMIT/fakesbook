@@ -1,20 +1,13 @@
 {% block javascript %}
-
 <script type="module">
     import '{{ asset('like.js') }}';
 </script>
-
 {% endblock %}
 
 {% if app.user %}
-
-    <a href="{{ path('app_like_post', {id: post.id}) }}" class="like inline-flex items-center px-4 py-2 bg-blue-200 text-white text-sm font-medium rounded hover:bg-blue-700 transition">
-        <span>👍</span>
-        <span class="ml-2 text-sm font-semibold text-white nbrLikes">
-    <i class="bi bi-hand-thumbs-up{% if post.isLikedBy(app.user) %}-fill{% endif %}"></i>
-            {{ post.likes | length }}
-        </span>
+    <a href="{{ path('app_like_post', {id: post.id}) }}" class="like group inline-flex flex-1 items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-semibold transition hover:bg-blue-50 {% if post.isLikedBy(app.user) %}text-blue-600{% else %}text-slate-500 hover:text-blue-600{% endif %}">
+        <svg class="h-5 w-5 transition group-hover:-translate-y-0.5" fill="{% if post.isLikedBy(app.user) %}currentColor{% else %}none{% endif %}" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 10v11H3V10h4Zm0 9c2 0 3 2 6 2h3.5a2 2 0 0 0 1.94-1.51l1.5-6A2 2 0 0 0 18 11h-4l.72-3.6A2.84 2.84 0 0 0 12 4l-5 6v9Z"/></svg>
+        <span>J’aime</span>
+        <span class="nbrLikes rounded-full bg-slate-100 px-2 py-0.5 text-xs">{{ post.likes|length }}</span>
     </a>
-
-
 {% endif %}
