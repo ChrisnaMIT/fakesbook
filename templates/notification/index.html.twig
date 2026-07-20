@@ -1,36 +1,18 @@
 {% extends 'base.html.twig' %}
-
-{% block title %}Notifications{% endblock %}
-
+{% block title %}Notifications · Fakebook{% endblock %}
 {% block body %}
-    <div class="max-w-3xl mx-auto px-4 py-6">
-        <h2 class="text-2xl font-bold mb-6">Mes notifications</h2>
-
-
-        {% if notifications is empty %}
-            <p class="text-gray-500">Aucune notification</p>
+<div class="mx-auto max-w-3xl px-4 py-8">
+    <div class="mb-6"><p class="text-sm font-bold uppercase tracking-wider text-blue-600">Votre activité</p><h1 class="mt-1 text-3xl font-black">Notifications</h1><p class="mt-2 text-slate-500">Retrouve les dernières interactions avec ton compte.</p></div>
+    <div class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+        {% for notification in notifications %}
+            <div class="flex items-center gap-4 border-b border-slate-100 p-5 last:border-0 hover:bg-slate-50">
+                <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full {% if notification.likeNotification %}bg-rose-100{% else %}bg-blue-100{% endif %} text-xl">{% if notification.likeNotification %}♥{% elseif notification.messageNotification %}💬{% else %}🔔{% endif %}</span>
+                <div class="min-w-0 flex-1"><p class="font-bold text-slate-800">{% if notification.likeNotification %}Quelqu’un a aimé votre publication{% elseif notification.messageNotification %}Vous avez reçu un nouveau message{% else %}Nouvelle notification{% endif %}</p><p class="mt-1 text-sm text-slate-400">{{ notification.createdAt|date('d/m/Y à H:i') }}</p></div>
+                <span class="h-3 w-3 rounded-full bg-blue-600"></span>
+            </div>
         {% else %}
-            <ul class="space-y-4">
-                {% for notification in notifications %}
-                    <li class="p-4 border rounded shadow-sm bg-white">
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <p class="text-sm text-gray-700">
-                                    {% if notification.likeNotification %}
-                                        ❤️ Like reçu
-                                    {% elseif notification.messageNotification %}
-                                        💬 Nouveau message
-                                    {% endif %}
-                                </p>
-                            </div>
-                            <span class="text-xs text-gray-400">
-                               {{ notification.createdAt|date('d/m/Y H:i') }}
-                        </span>
-                        </div>
-                    </li>
-                {% endfor %}
-            </ul>
-        {% endif %}
+            <div class="p-14 text-center"><span class="text-5xl">🔕</span><h2 class="mt-4 text-xl font-black">Tout est calme</h2><p class="mt-2 text-slate-500">Aucune notification pour le moment.</p></div>
+        {% endfor %}
     </div>
+</div>
 {% endblock %}
-
