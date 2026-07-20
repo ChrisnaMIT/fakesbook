@@ -1,31 +1,5 @@
 {% extends 'base.html.twig' %}
-
-{% block title %}Partager le post !{% endblock %}
-
+{% block title %}Partager · Fakebook{% endblock %}
 {% block body %}
-    <div class="max-w-2xl mx-auto mt-10 p-6 bg-yellow-100 border border-blue-300 rounded-xl shadow-lg">
-        <h1 class="text-2xl font-bold mb-6 text-center">Partager ce post #{{ post.id }}</h1>
-
-        <p class="text-lg font-semibold mb-4">Avec :</p>
-
-        <div class="space-y-4">
-            {% for friend in app.user.profile.getFriends %}
-                <div class="flex items-center justify-between p-4 bg-white rounded-md shadow">
-                    <div class="flex items-center space-x-4">
-                        <div class="w-10 h-10 rounded-full bg-gray-300"></div>
-                        <span class="text-lg font-medium text-gray-800">{{ friend.ofUser.email }}</span>
-                    </div>
-
-                    <form action="{{ path('app_share', { post: post.id, recipient: friend.id }) }}" method="get">
-                        <button type="submit" class="px-4 py-2 bg-green-500 text-white rounded-full hover:bg-green-600 transition">
-                            Partager
-                        </button>
-                    </form>
-                </div>
-            {% endfor %}
-        </div>
-        <a href="{{ path('app_post') }}" class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">Retour</a>
-    </div>
-
+<div class="mx-auto max-w-xl px-4 py-8"><div class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl shadow-slate-200/50"><header class="flex items-center justify-between border-b border-slate-100 p-5"><div><p class="text-sm font-bold text-blue-600">PUBLICATION #{{ post.id }}</p><h1 class="text-2xl font-black">Partager avec un ami</h1></div><a href="{{ path('app_post') }}" class="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-xl">×</a></header><div class="space-y-2 p-5">{% for friend in app.user.profile.getFriends %}<div class="flex items-center gap-3 rounded-2xl p-3 hover:bg-slate-50"><span class="flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 font-bold text-white">{{ friend.ofUser.email|first|upper }}</span><span class="min-w-0 flex-1 truncate font-bold">{{ friend.displayName ?: friend.ofUser.email }}</span><form action="{{ path('app_share', {post: post.id, recipient: friend.id}) }}" method="get"><button class="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-blue-700">Partager</button></form></div>{% else %}<div class="p-10 text-center"><span class="text-4xl">👥</span><p class="mt-3 font-bold">Ajoute des amis pour partager cette publication.</p></div>{% endfor %}</div></div></div>
 {% endblock %}
-
