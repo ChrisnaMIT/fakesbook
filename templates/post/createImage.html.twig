@@ -1,42 +1,5 @@
 {% extends 'base.html.twig' %}
-
-
-
+{% block title %}Images de la publication · Fakebook{% endblock %}
 {% block body %}
-    <link rel="stylesheet" href="{{ asset('styles/app.css') }}">
-
-    <div class="bg-yellow-100 rounded-2xl shadow p-6 content-center">
-
-        <div class="flex items-center mb-4">
-            {% for image in post.images %}
-                <div class="image">
-                    <img src="{{ vich_uploader_asset(image,"imageFile") | imagine_filter('thumbnail') }}" alt="">
-                    <a href="{{ path('app_post_image_delete', {id:image.id}) }}"
-                       class="btn btn-danger"><strong>X</strong></a>
-                </div>
-
-
-            {% endfor %}
-
-        </div>
-
-        <a href="{{ path('app_post') }}" class="text-gray-900 bg-gradient-to-r from-lime-200 via-lime-400 to-lime-500 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-lime-300 dark:focus:ring-lime-800 shadow-lg shadow-lime-500/50 dark:shadow-lg dark:shadow-lime-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">Retour</a>
-        <hr>
-
-
-        {{ form_start(form) }}
-        {{ form_row(form.imageFile) }}
-        <button type="submit" class="text-white bg-gradient-to-br from-pink-500 to-orange-400 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">add</button>
-
-        {{ form_end(form) }}
-    </div>
-
-
-
-
-
-
-
-
-
+<div class="mx-auto max-w-3xl px-4 py-8"><div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-200/50"><div class="flex items-center justify-between"><div><p class="text-sm font-bold text-blue-600">PUBLICATION #{{ post.id }}</p><h1 class="text-2xl font-black">Gérer les images</h1></div><a href="{{ path('app_post') }}" class="rounded-xl bg-slate-100 px-4 py-2 text-sm font-bold">Terminer</a></div><div class="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3">{% for image in post.images %}<div class="group relative aspect-square overflow-hidden rounded-2xl bg-slate-100"><img src="{{ vich_uploader_asset(image, 'imageFile') | imagine_filter('thumbnail') }}" class="h-full w-full object-cover" alt=""><a href="{{ path('app_post_image_delete', {id: image.id}) }}" class="absolute right-2 top-2 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 font-bold text-rose-600 shadow">×</a></div>{% else %}<p class="col-span-full py-8 text-center text-slate-400">Aucune image ajoutée.</p>{% endfor %}</div>{{ form_start(form, {attr: {class: 'mt-6 rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 p-5'}}) }}{{ form_row(form.imageFile) }}<button type="submit" class="mt-4 w-full rounded-xl bg-blue-600 px-5 py-3 font-bold text-white">Ajouter l’image</button>{{ form_end(form) }}</div></div>
 {% endblock %}
